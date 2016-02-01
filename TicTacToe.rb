@@ -52,25 +52,30 @@ Winning_Combinations = [
 
   def find_winner
      Winning_Combinations.each do |array|
-      # Fill in the condition, that field is not empty
-      if stone_at(array[0]) == 'X' || stone_at(array[0]) == 'O'
-        if   stone_at(array[0]) ==  stone_at(array[1]) &&  stone_at(array[1]) ==  stone_at(array[2])  
-         puts "Winner! The winner is #{stone_at(array[0])}"
-          true
+      if (valid_move(array[0]) == false) && stone_at(array[0]) ==  stone_at(array[1]) &&  stone_at(array[1]) ==  stone_at(array[2])
+         
+          return true
         else
           false
         end
-      else
-        false
       end
+  end
+
+def tie?
+  @fields.each do |key, value|
+    if @fields.values.any? { |e| e == ' ' }
+      return false
+    else
+      return true
     end
   end
+end
 
 end
 
 class Game
   attr_accessor :board, :position
-  attr_accessor :fields
+  attr_accessor :fields, :array, :stone_at
 
   def initialize
     @board = Board.new 
@@ -109,18 +114,36 @@ class Game
     end   
   end
 
+  def winner?
+    if board.find_winner == true
+      puts "Winner!" 
+      return true 
+    else
+      false
+    end
+  end
+
+  def have_tie?
+    if board.tie? == true
+      puts "We have a tie!"
+      return true
+    else
+      false
+    end
+  end
+
   def game_start
     @count_move = 0
-    while @count_move < 10
+    #if board.winner
+    until winner? == true || have_tie? == true
       ask_user_for_move
-      #store what the user inputs in a local variable called position
       if board.valid_position?(position) == false
         puts "This is not a valid move"
       else
       next_stone
       print_board
       @count_move = @count_move + 1
-      board.find_winner
+      
       end
     end
   end
